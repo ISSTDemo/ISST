@@ -16,6 +16,7 @@
 @property(strong,nonatomic)NSString *SClikes;//吐槽点赞数
 @property(strong,nonatomic)NSString *SCdislikes;//吐槽鸡蛋数
 @property(strong,nonatomic)NSString *SCnickname;
-@property(strong,nonatomic)NSString *SCisliked;
-@property(strong,nonatomic)NSString *SCisdisliked;
+@property(strong,nonatomic)NSString  *SCisliked;
+@property(strong,nonatomic)NSString  *SCisdisliked;
+@property(assign,nonatomic)int SCisdisplay;
 @end

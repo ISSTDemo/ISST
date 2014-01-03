@@ -17,7 +17,7 @@
 #import "JsonParser.h"
 ////////////
 
-@interface ViewController : UIViewController<UITableViewDelegate, UITableViewDataSource, LoadMoreTableFooterDelegate,EGORefreshTableHeaderDelegate>
+@interface ViewController : UIViewController<UITableViewDelegate, UITableViewDataSource, LoadMoreTableFooterDelegate,EGORefreshTableHeaderDelegate, UITextFieldDelegate>
 {
     EGORefreshTableHeaderView *_refreshTableView;
     LoadMoreTableFooterView  *_loadMoreTableView;
@@ -30,7 +30,11 @@
 @property (strong,nonatomic)ISSTSpittlesApi *spittleApi;
 @property (strong, nonatomic) IBOutlet UIButton *nameBtn;//昵称修改
 @property (strong, nonatomic) IBOutlet UILabel *nameLable;
-- (IBAction)SortControls:(UISegmentedControl *)sender;
+
+@property (strong, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
+@property (strong, nonatomic) IBOutlet UITableViewCell *secondTableViewCell;
+
+@property (strong, nonatomic)IBOutlet UIActivityIndicatorView *activityIndicatorView;
 
 @property (weak, nonatomic) IBOutlet UIView *textFieldView;
 @property (weak, nonatomic) IBOutlet UITextField *textField;
@@ -38,15 +42,15 @@
 @property (strong, nonatomic) NSMutableArray *array;
 @property(strong,nonatomic)ISSTSpittleContentModel *spittleContent;
 @property(strong,nonatomic)NSString *userId;
+@property(strong,nonatomic)UITableViewCell *selectedCell;
+@property(strong,nonatomic) NSIndexPath* selectedindexPath;
 
+- (IBAction)SortControls:(UISegmentedControl *)sender;
 
-- (IBAction)nameBtnClick:(id)sender;//昵称修改
+- (IBAction)SendSpittle:(id)sender;//发送吐槽内容
+-(IBAction)likeBtnClick:(UIButton *)sender;
+-(IBAction)dislikeBtnClick:(UIButton *)sender;
 
-- (IBAction)textFieldReturnEditing:(id)sender;
-
-- (IBAction)backgroundTab:(id)sender;//发送吐槽内容
--(IBAction)likeBtnClick:(id)sender;
--(IBAction)dislikeBtnClick:(id)sender;
 
 //开始重新加载时调用的方法
 - (void)reloadTableViewDataSource;

@@ -23,6 +23,7 @@
 @property (strong, nonatomic) IBOutlet UITextField *passwordField;
 @property (strong, nonatomic) IBOutlet UILabel *errorLabel;
 
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicatorView;
 
 - (IBAction)nameDoneEditing:(id)sender;
 - (IBAction)passwordDoneEditing:(id)sender;

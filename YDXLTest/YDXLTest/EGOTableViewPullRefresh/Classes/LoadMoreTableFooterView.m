@@ -129,7 +129,7 @@
         //		[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         
-        NSString *lastUpdated = NSLocalizedString(@"last updated", @"");
+        NSString *lastUpdated = NSLocalizedString(@"上次更新", @"");
 		_lastUpdatedLabel.text = [NSString stringWithFormat:@"%@ %@",lastUpdated, [dateFormatter stringFromDate:date]];
 		[[NSUserDefaults standardUserDefaults] setObject:_lastUpdatedLabel.text forKey:@"EGORefreshTableView_LastRefresh"];
 		[[NSUserDefaults standardUserDefaults] synchronize];
@@ -148,7 +148,7 @@
 		case EGOOPullRefreshPulling:
 			
             //			_statusLabel.text = NSLocalizedString(@"Release to refresh...", @"Release to refresh status");
-            _statusLabel.text = NSLocalizedString(@"release to refresh", @"");
+            _statusLabel.text = NSLocalizedString(@"释放刷新...", @"");
             
             
             [CATransaction begin];
@@ -167,7 +167,7 @@
 			}
 			
             //			_statusLabel.text = NSLocalizedString(@"Pull down to refresh...", @"Pull down to refresh status");
-            _statusLabel.text = NSLocalizedString(@"pull up to refresh", @"");
+            _statusLabel.text = NSLocalizedString(@"上拉刷新...", @"");
 			[_activityView stopAnimating];
             
             [CATransaction begin];
@@ -183,7 +183,7 @@
 		case EGOOPullRefreshLoading:
 			
             //			_statusLabel.text = NSLocalizedString(@"Loading...", @"Loading Status");
-            _statusLabel.text = NSLocalizedString(@"loading", @"");
+            _statusLabel.text = NSLocalizedString(@"加载...", @"");
 			[_activityView startAnimating];
 			[CATransaction begin];
 			[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];

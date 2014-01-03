@@ -15,4 +15,5 @@
 - (void)requestDataOnSuccess:(id)backToControllerData;
 
 - (void)requestDataOnFail:(NSString *)error;
+
 @end

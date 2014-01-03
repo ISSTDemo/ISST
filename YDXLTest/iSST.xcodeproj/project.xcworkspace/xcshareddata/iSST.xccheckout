@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>75FEDBDF-A121-49C0-B607-AE68C495B049</string>
+	<key>IDESourceControlProjectName</key>
+	<string>iSST</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>70D09C6C-B17E-454F-B3F5-F0A39A142120</key>
+		<string>ssh://github.com/iSST-iOS/iSST-master.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>YDXLTest/iSST.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>70D09C6C-B17E-454F-B3F5-F0A39A142120</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/iSST-iOS/iSST-master.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>70D09C6C-B17E-454F-B3F5-F0A39A142120</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>70D09C6C-B17E-454F-B3F5-F0A39A142120</string>
+			<key>IDESourceControlWCCName</key>
+			<string>iSST-master</string>
+		</dict>
+	</array>
+</dict>
+</plist>

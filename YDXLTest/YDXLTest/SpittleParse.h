@@ -10,4 +10,7 @@
 
 @interface SpittleParse : NSObject
 
+//解析评论信息
++ (id)iSSTSpittleContentModelParse:(NSData *)datas;
+
 @end

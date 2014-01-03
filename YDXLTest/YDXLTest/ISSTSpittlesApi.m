@@ -7,6 +7,7 @@
 //
 
 #import "ISSTSpittlesApi.h"
+#import "SpittleParse.h"
 
 @implementation ISSTSpittlesApi
 
@@ -16,28 +17,29 @@
 - (void)requestPostSpittleWithUserId:(NSString*)user_id andContent:(NSString *)content
 {
     self.method_id = POST_SPITTLE;
- //URL: /isst/api{userId}/spittles, POST {content: string}
     datas=[NSMutableData new];
     NSString *subUrlString = [NSString stringWithFormat:@"/users/%@/spittles",user_id];
     NSString  *postSpittle = [NSString stringWithFormat:@"content=%@",content];
-    [super requestWithSuburl:subUrlString Method:@"POST" Delegate:self Info:postSpittle];
+    
+    NSDictionary *md5Dic = @{@"userId": user_id,@"content":content};
+    [super requestWithSuburl:subUrlString Method:@"POST" Delegate:self Info:postSpittle MD5Dictionary:md5Dic];
 }
 - (void)requestDownGetSpittlesWithUserId:(NSString *)user_id andPage:(int)page andPageSize:(int)pageSize
 {
     self.method_id = DOWN_REFRESH;
     datas=[NSMutableData new];
-    //URL: /isst/api/users/{userId}/spittles?page=int&pageSize=int,GET
     NSString *subUrl = [NSString stringWithFormat:@"/users/%@/spittles?page=%d&pageSize=%d",user_id,page,pageSize];
-    [super requestWithSuburl:subUrl Method:@"GET" Delegate:self Info:@""];
+    NSDictionary *md5Dic = @{@"userId": user_id,@"page":[NSString stringWithFormat:@"%d",page],@"pageSize":[NSString stringWithFormat:@"%d",pageSize]};
+    [super requestWithSuburl:subUrl Method:@"GET" Delegate:self Info:@"" MD5Dictionary:md5Dic];
 }
 
-- (void)requestUpGetSpittles
+- (void)requestUpGetSpittlesGetSpittlesWithUserId:(NSString *)user_id andMaxSpittleIdOfCurrentPage:(int)maxSpittleId andNextPage:(int)nextPage andPageSize:(int)pageSize
 {
     self.method_id = UP_REFRESH;
-
-   
-    [super requestWithSuburl:@"" Method:@"GET" Delegate:self Info:nil];
-
+    datas=[NSMutableData new];
+    NSString *subUrl = [NSString stringWithFormat:@"/users/%@/spittles?id=%d&page=%d&pageSize=%d",user_id,maxSpittleId,nextPage,pageSize];
+    NSDictionary *md5Dic = @{@"userId": user_id,@"id":[NSString stringWithFormat:@"%d",maxSpittleId],@"page":[NSString stringWithFormat:@"%d",nextPage],@"pageSize":[NSString stringWithFormat:@"%d",pageSize]};
+    [super requestWithSuburl:subUrl Method:@"GET" Delegate:self Info:@"" MD5Dictionary:md5Dic];
 }
 
 - (void)requestLikeGetSpittlesWithUserId:(NSString *)user_id andLike:(BOOL)like andCount:(int)count
@@ -50,26 +52,31 @@
         self.method_id = EGG_SPITTLE_REFRESH;
         
     }
-    
-    //URL: /isst/api/users/{userId}/spittles/likes?isLike=0|1&count=int, GET
     NSString *subUrl = [NSString stringWithFormat:@"/users/%@/spittles/likes?isLike=%d&count=%d",user_id,like?1:0,count];
-    [super requestWithSuburl:subUrl Method:@"GET" Delegate:self Info:@""];
     
+    NSDictionary *md5Dic = @{@"userId": user_id,@"isLike":[NSString stringWithFormat:@"%d",(like?1:0)],@"count":[NSString stringWithFormat:@"%d",count]};
 
+    [super requestWithSuburl:subUrl Method:@"GET" Delegate:self Info:@""MD5Dictionary:md5Dic ];
 }
 
 - (void)requestLikeSpittleWithUserId:(NSString *)user_id andSpittlesId:(NSString *)spittleId andLike:(BOOL)like
 {
-    self.method_id = LIKE_SPITTLE;
-  //  URL: /isst/api/users/{userId}/spittles/{spittleId}/likes, POST{isLike:0|1}
-///RESPONSE: {code: int, message: string} code==0?error(message):success
+    datas=[NSMutableData new];
+    if(like)
+        self.method_id = LIKE_SPITTLE;
+    else
+        self.method_id=EGG_SPITTLE;
     NSString *subUrl = [NSString stringWithFormat:@"/users/%@/spittles/%@/likes",user_id,spittleId];
     NSString *info = [NSString stringWithFormat:@"isLike=%d",like?1:0];
-     [super requestWithSuburl:subUrl Method:@"GET" Delegate:self Info:info];
+    
+    NSDictionary *md5Dic = @{@"userId": user_id,@"spittleId":spittleId, @"isLike":[NSString stringWithFormat:@"%d",(like?1:0)]};
+
+    [super requestWithSuburl:subUrl Method:@"POST" Delegate:self Info:info MD5Dictionary:md5Dic];
 }
 
 - (void)requestNoGetSpittles
 {
+    datas=[NSMutableData new];
     self.method_id = EGG_SPITTLE_REFRESH;
     [super requestWithSuburl:@"" Method:@"GET" Delegate:self Info:nil];
 
@@ -77,18 +84,17 @@
 
 - (void)requestPutNameWithUserId:(NSString *)user_id andNickName:(NSString *)newNickName
 {
-    //URL: /isst/api/users/{userId}, POST {nickname: string, _method: PUT}
     self.method_id = PUT_NAME;
     datas=[NSMutableData new];
     NSString *putName = [NSString stringWithFormat:@"nickname=%@&_method=PUT",newNickName];
-    [super requestWithSuburl:[NSString stringWithFormat:@"/users/%@",user_id] Method:@"POST" Delegate:self Info:putName];
+    NSDictionary *md5Dic = @{@"userId": user_id,@"nickname":newNickName};
+    [super requestWithSuburl:[NSString stringWithFormat:@"/users/%@",user_id] Method:@"POST" Delegate:self Info:putName MD5Dictionary:md5Dic];
 }
-
-
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
      NSLog(@"error=%@",[error localizedDescription]);
+    [self.webApiDelegate requestDataOnFail:@"请查看网络连接"];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
@@ -103,76 +109,93 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    NSLog(@"请求完成");
-   // NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
-  //  NSLog(@"%@",dict);
-    if (self.method_id == PUT_NAME) {
-        //RESPONSE: {code: int, message: string} code==0?error(message):success
-        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
-        NSString *codeString = [dict objectForKey:@"code"];//获取返回的code，确定返回数据是否正确。
-        if ([codeString intValue] <= 0) {
-            NSLog(@"网络连接错误");
-            [self.webApiDelegate requestDataOnFail:@"网络连接错误"];
-        }
-        else
-        {
-            [self.webApiDelegate requestDataOnSuccess:dict];
-        }
+    NSString *codeString;//返回的 code
+    NSDictionary *dict ; //返回的NSDictionary
+    NSArray *array;
+    switch (self.method_id) {
+        case PUT_NAME:
+           dict= [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
+           codeString = [dict objectForKey:@"code"];//获取返回的code，确定返回数据是否正确。
+            if ([codeString intValue] <= 0) {
+                [self.webApiDelegate requestDataOnFail:[dict objectForKey:@"message"]];
+            }
+            else
+            {
+                [self.webApiDelegate requestDataOnSuccess:dict];
+            }
+            break;
+        case POST_SPITTLE:
+            //RESPONSE: {code: int, message: string} code==0?error(message):success
+            dict = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
+            //NSLog(@"splitepost=%@",dict);
+            codeString = [dict objectForKey:@"code"];//获取返回的code，确定返回数据是否正确。
+            if ([codeString intValue] <= 0) {
+               // NSLog(@"网络连接错误");
+                [self.webApiDelegate requestDataOnFail:[dict objectForKey:@"message"]];
+            }
+            else
+            {
+                [self.webApiDelegate requestDataOnSuccess:dict];
+            }
+            break;
+        case DOWN_REFRESH:
+            array = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
+          //  NSLog(@"Arraydict=%@",array);
+            if (array==nil) {
+               // NSLog(@"网络连接错误");
+                [self.webApiDelegate requestDataOnFail:@"网络连接错误"];
+            }
+            else
+            {
+                  [self.webApiDelegate requestDataOnSuccess:[SpittleParse iSSTSpittleContentModelParse:datas]];
+               // [self.webApiDelegate requestDataOnSuccess:array];
+            }
+            break;
+        case UP_REFRESH:
+            array = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
+            NSLog(@"Arraydict=%@",array);
+            [self.webApiDelegate requestDataOnSuccess:[SpittleParse iSSTSpittleContentModelParse:datas]];
+            // [self.webApiDelegate requestDataOnSuccess:array];
+            break;
+        case LIKE_SPITTLE_REFRESH:
+            array = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
+            NSLog(@"Arraydict=%@",array);
+            [self.webApiDelegate requestDataOnSuccess:[SpittleParse iSSTSpittleContentModelParse:datas]];
+            // [self.webApiDelegate requestDataOnSuccess:array];
+        case EGG_SPITTLE_REFRESH:
+            array = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
+            [self.webApiDelegate requestDataOnSuccess:[SpittleParse iSSTSpittleContentModelParse:datas]];
+            // [self.webApiDelegate requestDataOnSuccess:array];
 
-    }
-    else if(self.method_id == POST_SPITTLE)
-    {
-    //RESPONSE: {code: int, message: string} code==0?error(message):success
-        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
-        NSLog(@"splitepost=%@",dict);
-        NSString *codeString = [dict objectForKey:@"code"];//获取返回的code，确定返回数据是否正确。
-        if ([codeString intValue] <= 0) {
-            NSLog(@"网络连接错误");
-            [self.webApiDelegate requestDataOnFail:@"网络连接错误"];
-        }
-        else
-        {
-            [self.webApiDelegate requestDataOnSuccess:dict];
-        }
-    }
-    else if(self.method_id == DOWN_REFRESH)
-    {////////注意这是一个NSArray
-        //RESPONSE: [{id: int, userId: int, nickname: string, content: string, postTime: timestamp, likes: int, dislikes: int, isLiked: 0|1, isDisliked:0|1}]
-        NSArray *dict = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
-        NSLog(@"Arraydict=%@",dict);
-        if (dict==nil) {
-            NSLog(@"网络连接错误");
-            [self.webApiDelegate requestDataOnFail:@"网络连接错误"];
-        }
-        else
-        {
-            [self.webApiDelegate requestDataOnSuccess:dict];
-        }
+            break;
+        case EGG_SPITTLE:
+            dict = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
+            codeString = [dict objectForKey:@"code"];//获取返回的code，确定返回数据是否正确。
+            if ([codeString intValue] <= 0) {
+                NSLog(@"网络连接错误");
+                [self.webApiDelegate requestDataOnFail:[dict objectForKey:@"message"]];
+            }
+            else
+            {
+                [self.webApiDelegate requestDataOnSuccess:dict];
+            }
 
-    }
-    else if(self.method_id == UP_REFRESH)
-    {
-        
-    }
-    else if(self.method_id == LIKE_SPITTLE_REFRESH)
-    {
-       //RESPONSE: [{id: int, userId: int, nickname: string, content: string, postTime: timestamp, likes: int, dislikes: int, isLiked: 0|1, isDisliked:0|1}]
-        NSArray *dict = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
-        NSLog(@"Arraydict=%@",dict);
-        [self.webApiDelegate requestDataOnSuccess:dict];
-        
-    }
-    else if(self.method_id == EGG_SPITTLE_REFRESH)
-    {
-        
-    }
-    else if(self.method_id == EGG_SPITTLE)
-    {
-    
-    }
-    else if (self.method_id == LIKE_SPITTLE)
-    {
-    
+            break;
+        case LIKE_SPITTLE:
+            dict = [NSJSONSerialization JSONObjectWithData:datas options:NSJSONReadingAllowFragments error:nil];
+            codeString = [dict objectForKey:@"code"];//获取返回的code，确定返回数据是否正确。
+            if ([codeString intValue] <= 0) {
+                NSLog(@"网络连接错误");
+                [self.webApiDelegate requestDataOnFail:[dict objectForKey:@"message"]];
+            }
+            else
+            {
+                [self.webApiDelegate requestDataOnSuccess:dict];
+            }
+
+            break;
+        default:
+            break;
     }
 }
 

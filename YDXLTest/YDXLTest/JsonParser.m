@@ -19,18 +19,6 @@
     NSLog(@"contents count = %d", [contents count]);
     
     NSMutableArray *results = [NSMutableArray array];
-    
-    for (NSDictionary *content in contents) {
-//        Contents *con = [[Contents alloc] init];
-//        con.iD = [content objectForKey:@"id"];
-//        con.createTime = [content objectForKey:@"createtime"];
-//        con.contents = [content objectForKey:@"contents"];
-//        con.name = [content objectForKey:@"name"];
-//        con.yesCount = [content objectForKey:@"yescount"];
-//        con.noCount = [content objectForKey:@"noCount"];
-//        [results addObject:con];
-    }
-    
     return results;
 }
 

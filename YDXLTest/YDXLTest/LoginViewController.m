@@ -21,7 +21,7 @@
 @synthesize errorLabel;
 @synthesize userApi;
 @synthesize user;// 用户信息
-
+@synthesize   activityIndicatorView;
 bool isok;//确定登陆是否成功，成功的话页面跳转，否则，不跳转
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -36,11 +36,17 @@ bool isok;//确定登陆是否成功，成功的话页面跳转，否则，不�
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    if(([[[UIDevice currentDevice] systemVersion] doubleValue]>=7.0))
+    {
+        self.edgesForExtendedLayout= UIRectEdgeNone;
+    }
+    [self.passwordField setSecureTextEntry:YES]; //设置密码输入框的格式为............格式
     isok=false;
     errorLabel.hidden = YES;
+    
     self.userApi = [[ISSTUserApi alloc]init];
     self.userApi.webApiDelegate = self;
+    [self.activityIndicatorView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
     shouldShowSplashView = YES;
     if (self.shouldShowSplashView) {
         [self showSplashView];
@@ -97,11 +103,12 @@ bool isok;//确定登陆是否成功，成功的话页面跳转，否则，不�
 }
 
 - (IBAction)nameDoneEditing:(id)sender {
-    [sender resignFirstResponder];
+    [self.nameField resignFirstResponder];
 }
 
+
 - (IBAction)passwordDoneEditing:(id)sender {
-     [sender resignFirstResponder];
+    [self.passwordField resignFirstResponder];
 }
 
 
@@ -111,15 +118,19 @@ bool isok;//确定登陆是否成功，成功的话页面跳转，否则，不�
     //get name and password
     NSString *nameString = nameField.text;
     NSString *passwordString = passwordField.text;
-    
     //neither name and password is nil , give an alert
     if ([nameString isEqualToString:@""]||[passwordString isEqualToString:@""]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"您好:" message:@"请输入用户名或者密码" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
         [alert show];
         return;
     }
-    else{
-        self.userApi.method_id = _LOGIN_; //1  means login
+    else
+    {
+        //先把虚拟键盘隐藏
+        [self.nameField resignFirstResponder];
+        [self.passwordField resignFirstResponder];
+        self.activityIndicatorView.hidesWhenStopped = NO;
+        [activityIndicatorView startAnimating];
         [self.userApi requestLoginName:nameString andPassword:passwordString];
     }
 }
@@ -130,44 +141,25 @@ bool isok;//确定登陆是否成功，成功的话页面跳转，否则，不�
     [self.passwordField resignFirstResponder];
 }
 
-
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
-//- (void)loginOnSuccess
-//{
-//    [UIView beginAnimations:@"View Flip" context:nil];
-//    [UIView setAnimationDuration:1.25];
-//    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-//    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:self.view cache:YES];
-//    [UIView commitAnimations];
-//
-//}
-
 //确定是否执行页面跳转  ,开始不允许跳转，只有当验证账号和密码正确可以进入后由登录代码执行切换
 -(BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
 {
-    NSLog(@"shouldPerformSegueWithIdentifier ISOK =%d",isok);
-    if (isok) {
+    if (isok)
         return YES;
-    }
-    else{
-
-        return NO;//
-        
-    }
+    else
+        return NO;
   }
 
 //页面跳转传递参数
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-//    //获取目的ViewController
     UITabBarController *destination =  (UITabBarController*)[segue destinationViewController];
-    NSLog(@"%@",destination.class);//UITabBarController
     UIViewController *vc =  [destination.childViewControllers objectAtIndex:0];
-        NSLog(@"%@",vc.class);
     if ([vc respondsToSelector:@selector(setUserModel:)]) {
         [vc setValue:self.user forKey:@"userModel"];
    }
@@ -180,9 +172,6 @@ bool isok;//确定登陆是否成功，成功的话页面跳转，否则，不�
 {
     if (self.userApi.method_id == _LOGIN_)
     {
-       // NSString *user_id =
-        NSLog(@"user_id=%@", info);
-
         self.userApi.method_id = _GET_USER_; //1 means getUserInfo;
         [self.userApi requestUserInfo:info];
    
@@ -190,9 +179,9 @@ bool isok;//确定登陆是否成功，成功的话页面跳转，否则，不�
     else if(self.userApi.method_id == _GET_USER_)
     {
         self.user = info;
+        self.activityIndicatorView.hidesWhenStopped = YES;
+        [activityIndicatorView stopAnimating];
         isok = YES;//可以进行页面跳转
-        if(isok)
-          NSLog(@"Hello world");
         if (isok) {
             [self performSegueWithIdentifier:@"login" sender:self];
         }
@@ -208,6 +197,8 @@ bool isok;//确定登陆是否成功，成功的话页面跳转，否则，不�
     [self.errorLabel setHidden:YES];
     self.nameField.text = @"";
     self.passwordField.text = @"";
+    self.activityIndicatorView.hidesWhenStopped = YES;
+    [activityIndicatorView stopAnimating];
 }
 
 @end

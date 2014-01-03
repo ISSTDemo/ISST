@@ -23,6 +23,6 @@
 - (void)requestLoginName:(NSString *)name andPassword:(NSString *)password;
 
 - (void)requestUserInfo:(NSString *)user_id;
-//-(void)requestUserId:(NSString*) userid NickName:(NSString*) nickname;
+
 
 @end

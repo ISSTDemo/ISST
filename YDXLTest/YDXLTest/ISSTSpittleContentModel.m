@@ -9,5 +9,5 @@
 #import "ISSTSpittleContentModel.h"
 
 @implementation ISSTSpittleContentModel
-@synthesize SCid,SCcontent,SCdislikes,SClikes,SCposttime,SCuserid,SCisdisliked,SCisliked,SCnickname;
+@synthesize SCid,SCcontent,SCdislikes,SClikes,SCposttime,SCuserid,SCisdisliked,SCisliked,SCnickname,SCisdisplay;
 @end

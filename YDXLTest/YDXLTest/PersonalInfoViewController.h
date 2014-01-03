@@ -7,7 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ISSTSpittlesApi.h"
 
 @interface PersonalInfoViewController : UIViewController
 
+@property (strong,nonatomic)ISSTSpittlesApi *spittleApi;
+
+@property (strong, nonatomic) IBOutlet UITextField *nickNameTextField;
+@property (strong, nonatomic) IBOutlet UITextField *userFullNameTextField;
+
+- (IBAction)changeNickName:(id)sender;
+
+- (IBAction)useridQuit:(id)sender;
 @end

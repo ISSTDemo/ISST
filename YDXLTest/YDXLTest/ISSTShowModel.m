@@ -9,5 +9,5 @@
 #import "ISSTShowModel.h"
 
 @implementation ISSTShowModel
-@synthesize Scategory,Sid,Sname,Sorganization,Sstatus,Svotenum,Syear;
+@synthesize Scategory,Sid,Sname,Sorganization,Sstatus,Syear,SsortNum,SvoteTime;
 @end

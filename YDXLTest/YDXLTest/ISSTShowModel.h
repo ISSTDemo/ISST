@@ -15,5 +15,9 @@
 @property(strong,nonatomic)NSString *Sorganization;//选送单位
 @property(strong,nonatomic)NSString *Scategory;//节目类别
 @property(strong,nonatomic)NSString *Sstatus;//状态，0，1，2分别代表未开始，正在进行，已经结束
-@property(strong,nonatomic)NSString *Svotenum;//投票分数
+//@property(strong,nonatomic)NSString *Svotenum;//投票分数
+
+@property(strong,nonatomic)NSString *SvoteTime;//投票time
+
+@property(strong,nonatomic)NSString *SsortNum;
 @end
